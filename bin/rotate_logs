@@ -1,0 +1,36 @@
+#!/bin/sh 
+
+PROJECT=/home/boincadm/projects/DrugDiscovery/
+
+cd $PROJECT/log_vps
+
+$PROJECT/bin/newlog feeder.log 3 
+$PROJECT/bin/newlog autodock_mgl_assimilator.log 3 
+$PROJECT/bin/newlog transitioner.log 3 
+$PROJECT/bin/newlog file_deleter.log 3 
+$PROJECT/bin/newlog autodock_mgl_validator.log 3 
+$PROJECT/bin/newlog sample_trivial_validator.log 3 
+$PROJECT/bin/newlog mdrun_assimilator.log 3
+$PROJECT/bin/newlog mdrun_beta_assimilator.log 3
+$PROJECT/bin/newlog mdrun_validator.log 3
+$PROJECT/bin/newlog mdrun_beta_validator.log 3
+$PROJECT/bin/newlog mdrun_cuda.assi.out 3
+$PROJECT/bin/newlog mdrun_cuda.val.out 3
+$PROJECT/bin/newlog mdrun_cuda_assimilator.log 3
+$PROJECT/bin/newlog mdrun_cuda_validator.log 3
+$PROJECT/bin/newlog osra_assimilator.log 3
+$PROJECT/bin/newlog osra_validator.log 3
+$PROJECT/bin/newlog feeder 3
+$PROJECT/bin/newlog transitioner 3
+$PROJECT/bin/newlog file_upload_handler.log 3
+$PROJECT/bin/newlog scheduler.log 3
+$PROJECT/bin/newlog archive.out 3
+$PROJECT/bin/newlog update_forum_activities.out 3
+$PROJECT/bin/newlog file_deleter.log 3
+$PROJECT/bin/newlog team_import.out  3
+$PROJECT/bin/newlog notify.out 3
+$PROJECT/bin/newlog autolock.out 3
+$PROJECT/bin/newlog cron.log 3
+$PROJECT/bin/newlog update_profiles.out 3
+$PROJECT/bin/newlog update_stats.out 3
+$PROJECT/bin/newlog update_uotd.out 3

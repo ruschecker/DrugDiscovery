@@ -1,0 +1,101 @@
+#!/bin/csh -f
+#
+#  Creates a new log file with the given name and filemode (if given)
+#  and saves old versions with digits appended.
+#
+#  Usage:   newlog  logfilename  [ count  [ filemodes ] ]
+#
+#  The new log has the UID/GID and protections as the existing one,
+#  unless you specify a filemode.
+#
+#  Eric Myers <myers@umich.edu>		- 20 July 1996
+#  Department of Physics, University of Michigan, Ann Arbor 
+#  @(#) $Revision: 1.11 $		$Date: 2005/09/08 17:24:11 $
+#######################################################################
+##  First argument is name of log file, possibly full path
+
+if ( $#argv <  1) then
+  echo "Usage: newlog logfile [ count [ filemodes ]]"
+  exit 1
+endif
+
+# Restrict path to only what is needed
+
+set PATH = ( /bin /usr/bin /usr/sbin )
+
+set LOGFILE = `basename $1`
+
+##  dirname isn't available on older BSD systems (like NeXT) 
+##  so use sed to simply strip off the base filename from the end
+
+set MATCH=$LOGFILE'$'
+set LOGDIR  = `echo $1 | sed -e "s/$MATCH//"`
+
+##  Second argument is number of the last log file to keep
+
+if ( $#argv >= 2 ) then
+  set NMAX = $2
+else
+  set NMAX = 99
+endif
+
+##  Third argument, if present, is filemode for the new log file
+
+set CHMOD=""
+if ( $#argv >= 3 ) then
+  set CHMOD = $3
+endif
+
+##  Go to directory in which file sits
+
+if ( "$LOGDIR" != "" ) then
+  if ( ! -d $LOGDIR ) then
+    echo "newlog: $LOGDIR: no such directory."
+    exit 2
+  endif
+  cd $LOGDIR
+endif
+
+##  Make sure the logfile is really a file
+
+if ( -d $LOGFILE ) then
+  echo "newlog: $LOGFILE is a directory, not a file."
+  exit 3
+elseif ( ! -f $LOGFILE ) then
+  echo "newlog: $LOGFILE is not a plain file."
+  exit 4
+endif
+
+
+## Don't create a new one if the old one is empty
+
+if ( -z $LOGFILE ) exit 0
+
+##  Roll through the old files, changing postfix numbers
+
+set N = $NMAX
+while ( $N > 0 )
+   if ( -f ${LOGFILE}.${N} )	rm -f ${LOGFILE}.${N}
+   if ( -f ${LOGFILE}.${N}.gz )	rm -f ${LOGFILE}.${N}.gz
+   if ( -f ${LOGFILE}.${N}.Z )	rm -f ${LOGFILE}.${N}.Z
+   @ M = $N - 1
+   if ( -f ${LOGFILE}.${M} )	mv ${LOGFILE}.${M}    ${LOGFILE}.${N}
+   if ( -f ${LOGFILE}.${M}.gz )	mv ${LOGFILE}.${M}.gz ${LOGFILE}.${N}.gz
+   if ( -f ${LOGFILE}.${M}.Z )	mv ${LOGFILE}.${M}.Z  ${LOGFILE}.${N}.Z
+   @ N = $M
+end
+
+#  Now save the most recent one as version zero, and create a new one
+#  (by copying over the file, we preserve group and protections, at
+#  least on some systems).
+
+cp -p ${LOGFILE} ${LOGFILE}.0
+cp    /dev/null  $LOGFILE
+
+# change protections if they were given
+
+if ( $CHMOD != "" ) then
+  chmod ${CHMOD} $LOGFILE
+endif
+
+exit 0
